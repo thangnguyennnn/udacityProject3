@@ -140,8 +140,8 @@ jobs:
             # install dependencies in package.json
             npm install
             # fix vulnerabilities and audit for critical vulnerabilities
-            npm audit fix --audit-level=critical --force
-            npm audit fix --force
+            npm audit fix --audit-level=critical
+            npm audit fix
             npm audit --audit-level=critical
 
   scan-backend:
@@ -161,9 +161,9 @@ jobs:
             # install dependencies in package.json
             npm install
             # fix vulnerabilities and audit for critical vulnerabilities
-            npm audit fix --audit-level=critical --force
+            npm audit fix --audit-level=critical
             # audit for critical vulnerabilities
-            npm audit fix --force
+            npm audit fix
             npm audit --audit-level=critical
 
   deploy-infrastructure:
