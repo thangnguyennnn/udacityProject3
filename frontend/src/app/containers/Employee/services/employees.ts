@@ -32,8 +32,6 @@ export class EmployeesService {
   }
 
   createEmployee(employee: EmployeeModel) {
-    console.log(process.env.API_URL);
-    console.log(process.env);
     return this.httpService.post(this.employeesUrl, employee);
   }
 
