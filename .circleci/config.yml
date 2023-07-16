@@ -245,36 +245,25 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # install dependencies by using apk package manager to install tar, gzip, nodejs, npm and aws cli
             apk add --update --no-cache nodejs tar npm aws-cli gzip
       - run:
           name: Get backend url
           command: |
-            # Export backend ip to environment variable to use in frontend .env file
             export BACKEND_IP=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
               --output text)
-            # Export backend url to environment variable to use in frontend .env file
             export API_URL="http://${BACKEND_IP}:3030"
-            # Add backend url to frontend .env file
             echo "API_URL = ${API_URL}"
-            # Add backend url to frontend .env file
             echo "API_URL=http://${BACKEND_IP}:3030" >> frontend/.env
-            # Cat .env file to check if it's correct
             cat frontend/.env
       - run:
           name: Deploy frontend objects
           command: |
-            # Change directory to frontend folder
             cd frontend
-            # Install dependencies
             npm install
-            # Build frontend
             npm run build
-            # Create tar.gz file with frontend build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-            # Upload frontend build to s3 bucket with workflow id as name
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -301,4 +290,4 @@ workflows:
       - run-migrations:
           requires: [configure-infrastructure]
       - deploy-frontend:
-          requires: [configure-infrastructure]
+          requires: [run-migrations]
