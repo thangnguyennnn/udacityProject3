@@ -289,7 +289,7 @@ jobs:
             apk add --update openssh-client tar gzip
             pip install awscli
       - run:
-          name: Deploy backend
+          name: Package backend
           command: |
             cd backend
             npm install typescript@latest -g
@@ -298,6 +298,9 @@ jobs:
             tar -czf artifact.tar.gz dist/* package*
             cd ..
             cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+      - run:
+          name: Deploy backend
+          command: |
             export TYPEORM_MIGRATIONS_DIR=./migrations
             export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
             export TYPEORM_MIGRATIONS=./migrations/*.ts
