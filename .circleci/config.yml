@@ -17,7 +17,6 @@ commands:
             fi
             aws cloudformation delete-stack --stack-name udapeople-frontend-thang-<<parameters.workflow_id>>
             aws cloudformation delete-stack --stack-name udapeople-backend-thang-<<parameters.workflow_id>>
-            exit 1
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -37,7 +36,6 @@ commands:
               cd ~/project/backend
               npm install
               npm run migration:revert
-              exit 1
             fi
             
 jobs:
@@ -54,7 +52,6 @@ jobs:
             cd frontend
             npm install
             npm run build
-            exit 1
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -72,7 +69,6 @@ jobs:
             cd backend
             npm install
             npm run build
-            exit 1
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -90,7 +86,6 @@ jobs:
             cd frontend
             npm install
             npm run test
-            exit 1
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -108,7 +103,6 @@ jobs:
             cd backend
             npm install
             npm run test
-            exit 1
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -160,7 +154,6 @@ jobs:
               --tags project=udapeople
               --stack-name "udapeople-backend-thang-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-              exit 1
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -169,7 +162,6 @@ jobs:
               --tags project=udapeople
               --stack-name "udapeople-frontend-thang-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-              exit 1
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -179,7 +171,6 @@ jobs:
               --output text)
             echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
-            exit 1
       - run: yum -y install tar gzip jq
       - persist_to_workspace:
           root: ~/
@@ -201,7 +192,6 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible aws-cli curl jq
-            exit 1
       - run:
           name: Configure server
           command: |
@@ -209,7 +199,6 @@ jobs:
             cat inventory.txt
             export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i inventory.txt configure-server.yml
-            exit 1
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
@@ -228,7 +217,6 @@ jobs:
             npm install
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
-            exit 1
       - run:
           name: Send migration results to memstash
           command: |
@@ -236,7 +224,6 @@ jobs:
             then
               curl https://kvdb.io/MEadVxp88F4amoSjEq3Djv/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
-            exit 1
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
@@ -348,7 +335,6 @@ jobs:
             then
               exit 0
             else
-              exit 1
             fi
       - run:
           name: Frontend smoke test.
@@ -359,7 +345,6 @@ jobs:
             then
               exit 0
             else
-              exit 1
             fi
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
