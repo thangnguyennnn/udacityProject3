@@ -279,6 +279,8 @@ jobs:
           fingerprints: ["3c:3b:12:03:68:2a:5e:f7:af:30:12:7b:99:25:aa:27"]
       - attach_workspace: 
           at: ~/
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Install dependencies
           command: |
@@ -286,6 +288,9 @@ jobs:
             apk add --update ansible zip
             apk add --update openssh-client tar gzip
             pip install awscli
+      - run:
+          name: Deploy backend
+          command: |
             cd backend
             npm install typescript@latest -g
             npm install
@@ -293,9 +298,6 @@ jobs:
             tar -czf artifact.tar.gz dist/* package*
             cd ..
             cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
-      - run:
-          name: Deploy backend
-          command: |
             export TYPEORM_MIGRATIONS_DIR=./migrations
             export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
             export TYPEORM_MIGRATIONS=./migrations/*.ts
