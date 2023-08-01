@@ -1,28 +1,29 @@
 ---
-
-- name: "Add nodejs from deb.nodesource.com."
-  become: yes
-  shell: |
-    curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
-
-- name: "Install nodejs 13.x."
+# tasks file for configure-server
+# Update and upgrade packages on the server
+- name: 'Update and upgrade packages on server.'
   become: yes
   apt:
-    name: ["nodejs"]
-    state: latest
+    upgrade: yes
     update_cache: yes
-
-- name: "Install zip utility."
+    cache_valid_time: 86400
+# Remove unneeded packages on the server sudo apt autoremove
+- name: remove unneeded deps 
   become: yes
   apt:
-    name: [ "zip", "unzip" ]
+    autoremove: yes
+# Install nodejs and npm on the server  (sudo apt install nodejs npm)
+- name: install deps 
+  become: yes
+  apt:
+    name: ['nodejs', 'npm']
     state: latest
     update_cache: yes
-
-- name: "Install pm2."
+# Install pm2 on the server (sudo npm install pm2 -g)    
+- name: install pm2
   become: yes
   npm:
     name: pm2
     global: yes
+    state: latest
     production: yes
-    state: present
